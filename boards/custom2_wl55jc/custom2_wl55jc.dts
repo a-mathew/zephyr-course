@@ -1,0 +1,75 @@
+/dts-v1/;
+#include <st/wl/stm32wl55Xc.dtsi>
+#include <st/wl/stm32wl55jcix-pinctrl.dtsi>
+
+/ {
+	model = "Custom2 WL55JC";
+	compatible = "iomico,custom2-wl55jc";
+
+	chosen {
+		zephyr,console = &lpuart1;
+		zephyr,shell-uart = &lpuart1;
+		zephyr,sram = &sram0;
+		zephyr,flash = &flash0;
+		zephyr,code-partition = &slot0_partition;
+	};
+};
+
+&clk_hsi {
+	status = "okay";
+};
+
+&pll {
+	div-m = <1>;
+	mul-n = <6>;
+	div-r = <2>;
+	div-q = <2>;
+	clocks = <&clk_hsi>;
+	status = "okay";
+};
+
+&rcc {
+	clocks = <&pll>;
+	clock-frequency = <DT_FREQ_M(48)>;
+	cpu1-prescaler = <1>;
+	cpu2-prescaler = <1>;
+	ahb3-prescaler = <1>;
+	apb1-prescaler = <1>;
+	apb2-prescaler = <1>;
+};
+
+&lpuart1 {
+	pinctrl-0 = <&lpuart1_tx_pa2 &lpuart1_rx_pa3>;
+	pinctrl-names = "default";
+	current-speed = <115200>;
+	status = "okay";
+};
+
+&flash0 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 DT_SIZE_K(48)>;
+			read-only;
+		};
+
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0x0000c000 DT_SIZE_K(98)>;
+		};
+
+		slot1_partition: partition@24800 {
+			label = "image-1";
+			reg = <0x00024800 DT_SIZE_K(100)>;
+		};
+
+		storage_partition: partition@3d800 {
+			label = "storage";
+			reg = <0x0003d800 DT_SIZE_K(10)>;
+		};
+	};
+};

@@ -1,0 +1,6 @@
+board:
+  name: custom2_wl55jc
+  full_name: Custom2 WL55JC
+  vendor: st
+  socs:
+    - name: stm32wl55xx
